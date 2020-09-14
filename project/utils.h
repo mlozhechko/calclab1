@@ -8,7 +8,9 @@ public:
 
   static log& debug(const std::string& msg = "[debug] ") {
     static log ins;
-    std::cout << msg;
+    if (ins.isEnabled) {
+      std::cout << msg;
+    }
     return ins;
   }
 

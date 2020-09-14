@@ -68,13 +68,13 @@ int gaussSolve(const ub::matrix<T>& sourceMatrix, const ub::matrix<T>& sourceVec
       }
     }
 
-    if (columnAbsMax < std::numeric_limits<T>::epsilon()) {
-      std::cerr << "matrix det(A) == 0, system has infinite set of solutions" << std::endl;
-      return -1;
-    }
-
     if (k != columnAbsMaxIndex) {
       std::swap(transposeVec[k], transposeVec[columnAbsMaxIndex]);
+    }
+
+    if (std::abs(A(TR[k], k)) < std::numeric_limits<T>::epsilon()) {
+      std::cerr << "matrix det(A) == 0, system has infinite set of solutions" << std::endl;
+      return -1;
     }
 
     for (ssize_t i = k + 1; i < n; ++i) {
@@ -99,6 +99,11 @@ int gaussSolve(const ub::matrix<T>& sourceMatrix, const ub::matrix<T>& sourceVec
     logger << "\n";
     log::debug() << "after gauss A: " << A << "\n";
     log::debug() << "after gauss B: " << B << "\n";
+  }
+
+  if (std::abs(A(TR[n - 1], n - 1)) < std::numeric_limits<T>::epsilon()) {
+    std::cerr << "matrix det(A) == 0, system has infinite set of solutions" << std::endl;
+    return -1;
   }
 
   auto& logger = log::debug();
@@ -207,6 +212,12 @@ int QRDecomposition(const ub::matrix<U>& sourceMatrix, ub::matrix<U>& Q, ub::mat
       return -1;
     }
   }
+
+  if (std::abs(R(n - 1, n - 1)) < std::numeric_limits<U>::epsilon()) {
+    std::cerr << "matrix det == 0, QR decomposition cannot be completed" << std::endl;
+    return -1;
+  }
+
   log::debug() << "Q matrix " << T << "\n";
   log::debug() << "R matrix " << R << "\n";
 
